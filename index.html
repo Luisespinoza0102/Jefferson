@@ -1,0 +1,549 @@
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumple Mes, bb! 💙</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #070d19;
+            --envelope-main: #1e40af;
+            --envelope-flap: #2563eb;
+            --envelope-pocket: #1d4ed8;
+            --accent-blue: #60a5fa;
+            --glow-color: rgba(96, 165, 250, 0.4);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0f172a 50%, #020617 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #f8fafc;
+        }
+
+        .font-cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Ambient glowing background elements */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 3D Envelope Container */
+        .envelope-perspective {
+            perspective: 1200px;
+        }
+
+        .envelope-container {
+            position: relative;
+            width: 340px;
+            height: 230px;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s ease;
+        }
+
+        @media (max-width: 380px) {
+            .envelope-container {
+                width: 300px;
+                height: 200px;
+            }
+        }
+
+        .envelope-container:hover {
+            transform: translateY(-8px) rotateX(4deg);
+        }
+
+        .envelope-base {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, #1e3a8a, #1d4ed8);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 
+                        0 0 35px var(--glow-color);
+            overflow: hidden;
+        }
+
+        /* Flap animation */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 135px;
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: top;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.2s, z-index 0.1s 0.4s;
+            z-index: 5;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Envelope pocket overlays */
+        .envelope-pocket-left {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            clip-path: polygon(0 0, 0 100%, 55% 100%);
+            z-index: 3;
+        }
+
+        .envelope-pocket-right {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(-135deg, #1d4ed8 0%, #1e3a8a 100%);
+            clip-path: polygon(100% 0, 100% 100%, 45% 100%);
+            z-index: 3;
+        }
+
+        .envelope-pocket-bottom {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, #1e3a8a 0%, #2563eb 100%);
+            clip-path: polygon(0 100%, 100% 100%, 50% 40%);
+            z-index: 4;
+            opacity: 0.95;
+        }
+
+        /* Interactive Wax Seal */
+        .seal-button {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 52px;
+            height: 52px;
+            background: radial-gradient(circle at 30% 30%, #93c5fd, #3b82f6 60%, #1d4ed8);
+            border-radius: 50%;
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(147, 197, 253, 0.8);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        /* Letter Inside */
+        .letter-card {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 190px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 24px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            transition: transform 0.9s cubic-bezier(0.34, 1.35, 0.64, 1) 0.5s, 
+                        height 0.8s ease 0.6s, 
+                        opacity 0.4s ease;
+            z-index: 2;
+            opacity: 0.95;
+            color: #0f172a;
+            overflow: hidden;
+        }
+
+        /* OPEN STATE ANIMATIONS */
+        .envelope-container.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.1s 0.2s;
+        }
+
+        .envelope-container.open .seal-button {
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+        }
+
+        .envelope-container.open .letter-card {
+            transform: translateX(-50%) translateY(-220px);
+            height: auto;
+            min-height: 440px;
+            z-index: 10;
+            opacity: 1;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(147, 197, 253, 0.6);
+        }
+
+        /* Glassmorphism Cards & Modals */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(147, 197, 253, 0.18);
+        }
+
+        /* Canvas Overlay */
+        canvas#floatingCanvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Heart pulse effect */
+        @keyframes subtlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+        .animate-heart-pulse {
+            animation: subtlePulse 1.6s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 relative">
+
+    <!-- Background Ambient Glows -->
+    <div class="glow-orb w-96 h-96 bg-blue-600/20 top-10 -left-20"></div>
+    <div class="glow-orb w-96 h-96 bg-cyan-500/15 bottom-10 -right-20"></div>
+
+    <!-- Canvas for floating hearts and twinkling stars -->
+    <canvas id="floatingCanvas"></canvas>
+
+    <!-- Main Interactive Container -->
+    <main class="relative z-10 w-full max-w-md flex flex-col items-center justify-center my-auto">
+
+        <!-- Header Instruction Badge -->
+        <div id="badgeInstruction" class="mb-10 text-center transition-all duration-500">
+            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-panel border border-blue-400/30 text-blue-200 text-xs sm:text-sm font-medium shadow-xl animate-bounce">
+                <span class="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
+                ✨ Haz clic en el sobre para abrir tu carta ✨
+            </div>
+        </div>
+
+        <!-- Envelope Wrapper -->
+        <div class="envelope-perspective my-2">
+            <div id="envelope" class="envelope-container" onclick="toggleEnvelope()">
+                
+                <!-- Base Envelope Visuals -->
+                <div class="envelope-base"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-pocket-left"></div>
+                <div class="envelope-pocket-right"></div>
+                <div class="envelope-pocket-bottom"></div>
+
+                <!-- Heart Wax Seal -->
+                <div class="seal-button">
+                    <svg class="w-6 h-6 text-white animate-heart-pulse" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+
+                <!-- The Letter Card (Revealed on Open) -->
+                <article class="letter-card flex flex-col justify-between" onclick="stopPropagation(event)">
+                    <div>
+                        <!-- Header -->
+                        <div class="text-center pb-3 mb-3 border-b border-blue-100">
+                            <span class="text-[10px] font-bold tracking-widest text-blue-600 uppercase">Mensaje de Cumple Mes</span>
+                            <h1 class="text-3xl sm:text-4xl font-cursive font-bold text-blue-950 mt-1">
+                                ¡Feliz Cumple Mes, bb! 💙
+                            </h1>
+                        </div>
+
+                        <!-- Romantic Content Body -->
+                        <div class="space-y-3 text-slate-700 text-xs sm:text-sm leading-relaxed text-center">
+                            <p class="font-serif-title italic text-slate-800 text-sm sm:text-base">
+                                "Cada día  a tu lado se ha convertido en mi regalo favorito."
+                            </p>
+                            <p>
+                                Gracias por llenar mis días de sonrisas, por tu cariño sincero y por ser ese refugio bonito donde siempre quiero estar. 
+                            </p>
+                            <p class="font-semibold text-blue-900 pt-1">
+                                ¡Tu Osito te ama infinitamente hoy y siempre! 💫✨
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Action Buttons inside Letter -->
+                    <div class="mt-5 pt-3 border-t border-blue-100/80 flex flex-col gap-2">
+                        <button onclick="triggerLoveBurst(event)" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium text-xs sm:text-sm shadow-md hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 active:scale-95">
+                            <svg class="w-4 h-4 text-blue-200" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            </svg>
+                            <span>¡Enviar un abrazo virtual!</span>
+                        </button>
+
+                        <button onclick="openReasonsModal(event)" class="w-full py-2 px-4 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5">
+                            <span>✨ Ver razones por las que te amo</span>
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <!-- Interactive Pulse Counter Section (Revealed when card opens) -->
+        <div id="interactiveSection" class="mt-8 w-full transition-all duration-700 opacity-0 pointer-events-none transform translate-y-4">
+            <div class="glass-panel rounded-2xl p-4 text-center shadow-2xl flex items-center justify-between gap-4 border border-blue-400/20">
+                <div class="text-left">
+                    <p class="text-[11px] text-blue-300 uppercase tracking-wider font-semibold">Latidos de amor por ti</p>
+                    <p id="loveCounter" class="text-2xl font-bold text-white font-mono">0</p>
+                </div>
+                <button onclick="incrementLove(event)" class="p-3 rounded-xl bg-blue-600/80 hover:bg-blue-500 text-white transition-transform active:scale-90 shadow-lg shadow-blue-600/40">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Reasons Modal Overlay -->
+    <div id="reasonsModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeReasonsModal()">
+        <div class="glass-panel max-w-sm w-full rounded-3xl p-6 text-slate-100 border border-blue-400/30 shadow-2xl transform scale-95 transition-transform duration-300" onclick="stopPropagation(event)">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-blue-800/50">
+                <h3 class="text-lg font-bold text-blue-200 flex items-center gap-2">
+                    <span>💙</span> Razones por las que te amo
+                </h3>
+                <button onclick="closeReasonsModal()" class="text-blue-300 hover:text-white p-1">✕</button>
+            </div>
+            <ul class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <li class="flex items-start gap-2">
+                    <span class="text-blue-400 font-bold">•</span>
+                    <span>Por la forma tan linda en la que sonríes y me iluminas el día.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-blue-400 font-bold">•</span>
+                    <span>Por ser mi lugar seguro y mi mejor compañía siempre.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-blue-400 font-bold">•</span>
+                    <span>Por tu hermosa forma de ser.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-blue-400 font-bold">•</span>
+                    <span>Sencillamente por ser tú, la persona más especial de mi mundo.</span>
+                </li>
+            </ul>
+            <button onclick="closeReasonsModal()" class="mt-6 w-full py-2.5 bg-blue-600/80 hover:bg-blue-600 text-white rounded-xl text-xs font-semibold transition-colors">
+                Cerrar con cariño
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toastNotification" class="fixed bottom-6 z-40 opacity-0 transform translate-y-6 transition-all duration-300 pointer-events-none">
+        <div class="glass-panel px-5 py-3 rounded-2xl shadow-2xl border border-blue-400/30 text-blue-100 text-xs sm:text-sm flex items-center gap-3">
+            <span class="text-lg">🩵</span>
+            <span id="toastMessage">¡Un abracito lleno de amor ha sido enviado!</span>
+        </div>
+    </div>
+
+    <script>
+        // State variables
+        let isEnvelopeOpen = false;
+        let loveClicks = 100;
+
+        function stopPropagation(e) {
+            e.stopPropagation();
+        }
+
+        function toggleEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const badge = document.getElementById('badgeInstruction');
+            const interactiveSec = document.getElementById('interactiveSection');
+
+            if (!isEnvelopeOpen) {
+                envelope.classList.add('open');
+                badge.style.opacity = '0';
+                badge.style.pointerEvents = 'none';
+                
+                interactiveSec.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                isEnvelopeOpen = true;
+
+                // Burst particles on initial open
+                triggerLoveBurst();
+            }
+        }
+
+        function incrementLove(e) {
+            stopPropagation(e);
+            loveClicks += 1;
+            document.getElementById('loveCounter').innerText = loveClicks;
+            
+            // Create mini floating heart near button
+            const btn = e.currentTarget;
+            const rect = btn.getBoundingClientRect();
+            spawnBurstParticle(rect.left + rect.width / 2, rect.top);
+        }
+
+        function triggerLoveBurst(e) {
+            if (e) stopPropagation(e);
+            
+            const messages = [
+                "¡Abracito virtual apretado recibido! 🤗💙",
+                "¡Eres lo mejor de mi día a día! ✨",
+                "¡Un beso enorme de parte mía! 💋",
+                "¡Gracias por este hermoso cumple mes! 🥰"
+            ];
+
+            showToast(messages[Math.floor(Math.random() * messages.length)]);
+
+            // Generate burst particles on canvas
+            for (let i = 0; i < 35; i++) {
+                particles.push(new FloatingParticle(window.innerWidth / 2, window.innerHeight / 2 - 40, true));
+            }
+        }
+
+        function showToast(text) {
+            const toast = document.getElementById('toastNotification');
+            const msg = document.getElementById('toastMessage');
+            
+            msg.innerText = text;
+            toast.classList.remove('opacity-0', 'translate-y-6', 'pointer-events-none');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-6', 'pointer-events-none');
+            }, 3000);
+        }
+
+        function openReasonsModal(e) {
+            stopPropagation(e);
+            const modal = document.getElementById('reasonsModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.firstElementChild.classList.remove('scale-95');
+        }
+
+        function closeReasonsModal() {
+            const modal = document.getElementById('reasonsModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.firstElementChild.classList.add('scale-95');
+        }
+
+        // Initialize counter display
+        document.getElementById('loveCounter').innerText = loveClicks;
+
+        // --- CANVAS PARTICLES SYSTEM (Hearts & Sparkles) ---
+        const canvas = document.getElementById('floatingCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        const particles = [];
+        const blueShades = ['#93c5fd', '#60a5fa', '#3b82f6', '#2563eb', '#bfdbfe', '#e0f2fe'];
+
+        class FloatingParticle {
+            constructor(x, y, isBurst = false) {
+                this.x = x || Math.random() * width;
+                this.y = y || (isBurst ? height / 2 : Math.random() * height - height);
+                this.size = Math.random() * 10 + 5;
+                this.color = blueShades[Math.floor(Math.random() * blueShades.length)];
+                this.type = Math.random() > 0.3 ? 'heart' : 'sparkle';
+
+                if (isBurst) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 7 + 2;
+                    this.speedX = Math.cos(angle) * speed;
+                    this.speedY = Math.sin(angle) * speed;
+                } else {
+                    this.speedX = (Math.random() - 0.5) * 0.8;
+                    this.speedY = Math.random() * 1.2 + 0.5;
+                }
+
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.04;
+                this.opacity = Math.random() * 0.7 + 0.3;
+                this.isBurst = isBurst;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+
+                if (this.type === 'heart') {
+                    const d = this.size;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -d / 2);
+                    ctx.bezierCurveTo(d / 2, -d, d, -d / 3, 0, d / 2);
+                    ctx.bezierCurveTo(-d, -d / 3, -d / 2, -d, 0, -d / 2);
+                    ctx.fill();
+                } else {
+                    // Star/Sparkle shape
+                    const s = this.size / 2;
+                    ctx.beginPath();
+                    for (let i = 0; i < 4; i++) {
+                        ctx.lineTo(Math.cos((i * Math.PI) / 2) * s, Math.sin((i * Math.PI) / 2) * s);
+                        ctx.lineTo(Math.cos((i * Math.PI) / 2 + Math.PI / 4) * (s / 3), Math.sin((i * Math.PI) / 2 + Math.PI / 4) * (s / 3));
+                    }
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotationSpeed;
+
+                if (this.isBurst) {
+                    this.opacity -= 0.015;
+                    this.speedY += 0.04; // gravity effect
+                } else {
+                    if (this.y > height + 20) {
+                        this.y = -20;
+                        this.x = Math.random() * width;
+                    }
+                }
+            }
+        }
+
+        function spawnBurstParticle(x, y) {
+            for (let i = 0; i < 8; i++) {
+                particles.push(new FloatingParticle(x, y, true));
+            }
+        }
+
+        // Initial ambient particles
+        for (let i = 0; i < 40; i++) {
+            particles.push(new FloatingParticle());
+        }
+
+        function renderLoop() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw();
+
+                if (p.isBurst && p.opacity <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        window.onload = function() {
+            renderLoop();
+        };
+    </script>
+</body>
+</html>
